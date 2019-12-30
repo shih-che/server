@@ -6,9 +6,9 @@
 #pragma once
 
 #if defined(__WIN__)
-static PCSZ slash = "\\";
+#define dir_slash "\\"
 #else // !__WIN__
-static PCSZ slash = "/";
+#define dir_slash "/"
 #define stricmp strcasecmp
 #endif // !__WIN__
 
