@@ -7950,3 +7950,5 @@ ER_LOAD_INFILE_CAPABILITY_DISABLED
         rum "Comanda folosită nu este permisă deoarece clientul sau serverul MariaDB a dezactivat această capabilitate"
 ER_NO_SECURE_TRANSPORTS_CONFIGURED
         eng "No secure transports are configured, unable to set --require_secure_transport=ON"
+ER_NO_AUTOINCREMENT_WITH_UNIQUE
+        eng  "AUTO_INCREMENT column %`s cannot be used in the UNIQUE index %`s"
