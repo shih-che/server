@@ -7160,11 +7160,6 @@ Compare_keys handler::compare_key_parts(const Field &old_field,
   return Compare_keys::Equal;
 }
 
-bool handler::has_long_unique()
-{
-  return table->s->long_unique_table;
-}
-
 #ifdef WITH_WSREP
 /**
   @details

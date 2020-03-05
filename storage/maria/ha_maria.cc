@@ -2138,7 +2138,6 @@ void ha_maria::start_bulk_insert(ha_rows rows, uint flags)
     if ((file->state->records == 0) &&
         (share->state.state.records == 0) && can_enable_indexes &&
         (!rows || rows >= MARIA_MIN_ROWS_TO_DISABLE_INDEXES) &&
-        !has_long_unique() &&
         (file->lock.type == TL_WRITE || file->lock.type == TL_UNLOCK) &&
         (!share->have_versioning || !share->now_transactional ||
          file->used_tables->use_count == 1))

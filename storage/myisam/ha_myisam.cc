@@ -1740,7 +1740,7 @@ void ha_myisam::start_bulk_insert(ha_rows rows, uint flags)
     enable_indexes() failed, thus it's essential that indexes are
     disabled ONLY for an empty table.
   */
-  if (file->state->records == 0 && can_enable_indexes && !has_long_unique() &&
+  if (file->state->records == 0 && can_enable_indexes &&
       (!rows || rows >= MI_MIN_ROWS_TO_DISABLE_INDEXES))
   {
     if (file->open_flag & HA_OPEN_INTERNAL_TABLE)

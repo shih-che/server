@@ -2539,6 +2539,7 @@ TABLE *Delayed_insert::get_local_table(THD* client_thd)
   TABLE *copy;
   TABLE_SHARE *share;
   uchar *bitmap;
+  char *copy_tmp;
   uint bitmaps_used;
   KEY_PART_INFO *key_part, *end_part;
   Field **default_fields, **virtual_fields;
@@ -2604,7 +2605,7 @@ TABLE *Delayed_insert::get_local_table(THD* client_thd)
   */
   THD_STAGE_INFO(client_thd, stage_allocating_local_table);
   if (!multi_alloc_root(client_thd->mem_root,
-                        &copy, sizeof(*table),
+                        &copy_tmp, sizeof(*table),
                         &field, (uint) (share->fields+1)*sizeof(Field**),
                         &default_fields,
                         (share->default_fields +
@@ -2619,7 +2620,9 @@ TABLE *Delayed_insert::get_local_table(THD* client_thd)
                         NullS))
     goto error;
 
-  memcpy(copy, table, sizeof(*table));
+  /* Copy the TABLE object. */
+  copy= new (copy_tmp) TABLE;
+  *copy= *table;
 
   /* We don't need to change the file handler here */
   /* Assign the pointers for the field pointers array and the record. */
