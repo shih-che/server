@@ -271,6 +271,7 @@ Replaces: mariadb-client-10.0,
           mariadb-client-10.2,
           mariadb-client-10.3,
           mariadb-client-10.4,
+          mariadb-client-10.5 (<< ${source:Version}),
           mariadb-client-5.1,
           mariadb-client-5.2,
           mariadb-client-5.3,
@@ -343,6 +344,7 @@ Replaces: mariadb-client (<< ${source:Version}),
           mariadb-client-5.2,
           mariadb-client-5.3,
           mariadb-client-5.5,
+          mariadb-server-10.5 (<< ${source:Version}),
           mysql-client (<< 5.0.51),
           mysql-client-5.0,
           mysql-client-5.1,
@@ -487,6 +489,7 @@ Conflicts: mariadb-server (<< ${source:Version}),
            virtual-mysql-server
 Replaces: libmariadbclient-dev (<< 5.5.0),
           libmariadbclient16 (<< 5.3.4),
+          mariadb-client-10.5 (<< ${source:Version}),
           mariadb-server (<< ${source:Version}),
           mariadb-server-10.0,
           mariadb-server-10.1,
@@ -585,7 +588,6 @@ Description: Connect storage engine for MariaDB
 Package: mariadb-plugin-rocksdb
 Architecture: amd64 arm64 mips64el ppc64el
 Depends: mariadb-server-10.5 (= ${binary:Version}),
-         rocksdb-tools,
          ${misc:Depends},
          ${shlibs:Depends}
 Breaks: mariadb-rocksdb-engine-10.2,
@@ -618,28 +620,6 @@ Description: OQGraph storage engine for MariaDB
  The OQGraph engine is a computation engine plugin for handling hierarchies
  (trees) and graphs (friend-of-a-friend, etc) cleanly through standard SQL.
  This package contains the OQGraph plugin for MariaDB.
-
-Package: mariadb-plugin-tokudb
-Architecture: amd64
-Depends: libjemalloc1 (>= 3.0.0~) | libjemalloc2,
-         mariadb-server-10.5 (= ${binary:Version}),
-         ${misc:Depends},
-         ${shlibs:Depends}
-Breaks: mariadb-server-10.0,
-        mariadb-server-10.1,
-        mariadb-server-10.2,
-        mariadb-server-10.3,
-        mariadb-server-10.4
-Replaces: mariadb-server-10.0,
-          mariadb-server-10.1,
-          mariadb-server-10.2,
-          mariadb-server-10.3,
-          mariadb-server-10.4
-Description: TokuDB storage engine for MariaDB
- The TokuDB storage engine is for use in high-performance and write-intensive
- environments, offering increased compression and better performance based
- on fractal indexes.
- This package contains the TokuDB plugin for MariaDB.
 
 Package: mariadb-plugin-mroonga
 Architecture: any-alpha any-amd64 any-arm any-arm64 any-i386 any-ia64 any-mips64el any-mips64r6el any-mipsel any-mipsr6el any-nios2 any-powerpcel any-ppc64el any-sh3 any-sh4 any-tilegx
@@ -681,29 +661,6 @@ Description: Spider storage engine for MariaDB
  partitioning and xa transactions, and allows tables of different MariaDB
  instances to be handled as if they were on the same insctance. It refers to one
  possible implementation of ISO/IEC 9075-9:2008 SQL/MED.
-
-Package: mariadb-plugin-cassandra
-Architecture: any
-Depends: mariadb-server-10.5 (= ${binary:Version}),
-         ${misc:Depends},
-         ${shlibs:Depends}
-Breaks: mariadb-server-10.0,
-        mariadb-server-10.1,
-        mariadb-server-10.2,
-        mariadb-server-10.3,
-        mariadb-server-10.4
-Replaces: mariadb-server-10.0,
-          mariadb-server-10.1,
-          mariadb-server-10.2,
-          mariadb-server-10.3,
-          mariadb-server-10.4
-Description: Cassandra storage engine for MariaDB
- The Cassandra Storage Engine allows access to data in a Cassandra cluster from
- MariaDB, combining the best of SQL and no-SQL worlds. Cassandra SE (storage
- engine) makes Cassandra's column family appear as a table in MariaDB that you
- can insert to, update, and select from. You can write joins against this table,
- it is possible to join data that's stored in MariaDB with data that's stored in
- Cassandra.
 
 Package: mariadb-plugin-gssapi-server
 Architecture: any
