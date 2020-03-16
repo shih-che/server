@@ -28,7 +28,9 @@
 #define LENGTH_ARG     1
 #define WIDTH_ARG      2
 #define PREZERO_ARG    4
-#define ESCAPED_ARG    8 
+#define ESCAPED_ARG    8
+// Show truncation of string argument
+#define SH_TRUNC_ARG  16
 
 typedef struct pos_arg_info ARGS_INFO;
 typedef struct print_info PRINT_INFO;
@@ -60,20 +62,19 @@ struct print_info
 
   @param fmt         processed string
   @param length      print length or index of positional argument
-  @param pre_zero    returns flags with PREZERO_ARG set if necessary
+  @param flags       returns flags assosiated with length field
 
   @retval
     string position right after length digits
 */
 
-static const char *get_length(const char *fmt, size_t *length, uint *pre_zero)
+static const char *get_length(const char *fmt, size_t *length, uint *flags)
 {
-  
   for (; my_isdigit(&my_charset_latin1, *fmt); fmt++)
   {
     *length= *length * 10 + (uint)(*fmt - '0');
     if (!*length)
-      *pre_zero|= PREZERO_ARG;                  /* first digit was 0 */
+      *flags|= PREZERO_ARG;                  /* first digit was 0 */
   }
   return fmt;
 }
@@ -198,18 +199,42 @@ static char *process_str_arg(CHARSET_INFO *cs, char *to, const char *end,
                              size_t width, char *par, uint print_type)
 {
   int well_formed_error;
-  size_t plen, left_len= (size_t) (end - to) + 1;
+  uint dots= 0;
+  size_t plen, left_len= (size_t) (end - to) + 1, slen=0;
   if (!par)
     par = (char*) "(null)";
 
-  plen= strnlen(par, width);
+  plen= slen= strnlen(par, width + 1);
+  if (plen > width)
+    plen= width;
   if (left_len <= plen)
     plen = left_len - 1;
+  if ((slen > plen) && (print_type & SH_TRUNC_ARG))
+  {
+    if (plen < 3)
+    {
+      dots= plen;
+      plen= 0;
+    }
+    else
+    {
+      plen-= 3;
+      dots= 3;
+    }
+  }
+
   plen= my_well_formed_length(cs, par, par + plen, width, &well_formed_error);
   if (print_type & ESCAPED_ARG)
     to= backtick_string(cs, to, end, par, plen, '`');
   else
     to= strnmov(to,par,plen);
+
+  if (dots)
+  {
+    for (; dots; dots--)
+      *(to++)= '.';
+    *(to)= 0;
+  }
   return to;
 }
 
@@ -623,7 +648,7 @@ size_t my_vsnprintf_ex(CHARSET_INFO *cs, char *to, size_t n,
     if (*fmt == 's')				/* String parameter */
     {
       reg2 char *par= va_arg(ap, char *);
-      to= process_str_arg(cs, to, end, width, par, print_type);
+      to= process_str_arg(cs, to, end, width, par, print_type | SH_TRUNC_ARG);
       continue;
     }
     else if (*fmt == 'b')				/* Buffer parameter */

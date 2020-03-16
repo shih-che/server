@@ -99,12 +99,12 @@ int main(void)
   test1("Width is ignored for strings <x> <y>",
         "Width is ignored for strings <%04s> <%5s>", "x", "y");
 
-  test1("Precision works for strings <abcde>",
+  test1("Precision works for strings <ab...>",
         "Precision works for strings <%.5s>", "abcdef!");
 
-  test1("Flag '`' (backtick) works: `abcd` `op``q` (mysql extension)",
-        "Flag '`' (backtick) works: %`s %`.4s (mysql extension)",
-        "abcd", "op`qrst");
+  test1("Flag '`' (backtick) works: `abcd` `op``q`... (mysql extension)",
+        "Flag '`' (backtick) works: %`s %`.7s (mysql extension)",
+        "abcd", "op`qrstuuuuuuuuu");
 
   test1("Length modifiers work: 1 * -1 * 2 * 3",
         "Length modifiers work: %d * %ld * %lld * %zd", 1, -1L, 2LL, (size_t)3);
@@ -125,7 +125,7 @@ int main(void)
   test1("Asterisk '*' as a width works: <    4>",
         "Asterisk '*' as a width works: <%*d>", 5, 4);
 
-  test1("Asterisk '*' as a precision works: <qwerty>",
+  test1("Asterisk '*' as a precision works: <qwe...>",
         "Asterisk '*' as a precision works: <%.*s>", 6, "qwertyuiop");
 
   test1("Positional arguments for a width: <    4>",
