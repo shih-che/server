@@ -12,12 +12,12 @@ insert into t1 values (NULL,1);
 --connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2
 --connection node_2a
 begin;
-update t1 set a =5;
+update t1 set a = 5;
 
 --connection node_2
 
-#show create table information_schema.processlist;
-#select ID,USER,COMMAND,STATE,QUERY_ID from INFORMATION_SCHEMA.PROCESSLIST;
+--let $wait_condition = SELECT COUNT(*) = 1 FROM INFORMATION_SCHEMA.PROCESSLIST WHERE USER = 'root' AND COMMAND = 'Sleep' LIMIT 1
+--source include/wait_condition.inc
 
 --let $k_thread = `SELECT ID FROM INFORMATION_SCHEMA.PROCESSLIST WHERE USER = 'root' AND COMMAND = 'Sleep' LIMIT 1`
 
@@ -39,6 +39,9 @@ begin;
 update t1 set a =5;
 
 --connection node_2
+--let $wait_condition = SELECT COUNT(*) = 1 FROM INFORMATION_SCHEMA.PROCESSLIST WHERE USER = 'root' AND COMMAND = 'Sleep' LIMIT 1
+--source include/wait_condition.inc
+
 --let $k_thread = `SELECT ID FROM INFORMATION_SCHEMA.PROCESSLIST WHERE USER = 'root' AND COMMAND = 'Sleep' LIMIT 1`
 
 --disable_query_log

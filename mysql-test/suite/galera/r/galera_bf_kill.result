@@ -4,7 +4,7 @@ insert into t1 values (NULL,1);
 connect node_2a, 127.0.0.1, root, , test, $NODE_MYPORT_2;
 connection node_2a;
 begin;
-update t1 set a =5;
+update t1 set a = 5;
 connection node_2;
 select * from t1;
 a	b

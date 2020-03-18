@@ -42,6 +42,9 @@ START TRANSACTION;
 SELECT * FROM t1;
 
 --connection node_2
+--let $wait_condition = SELECT COUNT(*) = 1 FROM t1;
+--source include/wait_condition.inc
+
 UPDATE t1 SET f2 = 2;
 
 --connection node_1
