@@ -148,6 +148,11 @@ bool recv_parse_log_recs(
 /** Moves the parsing buffer data left to the buffer start */
 void recv_sys_justify_left_parsing_buf();
 
+/** Recovery system creates a page which has buffered intialized
+redo log records.
+@param[in]	page_id	page to be created using redo logs */
+void recv_recovery_create_page(const page_id_t page_id);
+
 /** Report optimized DDL operation (without redo log),
 corresponding to MLOG_INDEX_LOAD.
 @param[in]	space_id	tablespace identifier

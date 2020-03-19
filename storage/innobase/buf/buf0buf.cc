@@ -4194,7 +4194,7 @@ buf_wait_for_read(
 	}
 }
 
-/** This is the general function used to get access to a database page.
+/** This is the low level function used to get access to a database page.
 @param[in]	page_id		page id
 @param[in]	rw_latch	RW_S_LATCH, RW_X_LATCH, RW_NO_LATCH
 @param[in]	guess		guessed block or NULL
@@ -4205,7 +4205,7 @@ BUF_PEEK_IF_IN_POOL, BUF_GET_NO_LATCH, or BUF_GET_IF_IN_POOL_OR_WATCH
 @param[in]	mtr		mini-transaction
 @return pointer to the block or NULL */
 buf_block_t*
-buf_page_get_gen(
+buf_page_get_low(
 	const page_id_t		page_id,
 	const page_size_t&	page_size,
 	ulint			rw_latch,
@@ -4889,6 +4889,36 @@ evict_from_pool:
 				   RW_LOCK_FLAG_X | RW_LOCK_FLAG_S));
 
 	return(fix_block);
+}
+
+/** This is the general function used to get access to a database page.
+It does page initialization and applies the buffered redo logs.
+@param[in]	page_id		page id
+@param[in]	rw_latch	RW_S_LATCH, RW_X_LATCH, RW_NO_LATCH
+@param[in]	guess		guessed block or NULL
+@param[in]	mode		BUF_GET, BUF_GET_IF_IN_POOL,
+BUF_PEEK_IF_IN_POOL, BUF_GET_NO_LATCH, or BUF_GET_IF_IN_POOL_OR_WATCH
+@param[in]	file		file name
+@param[in]	line		line where called
+@param[in]	mtr		mini-transaction
+@param[out]	err		DB_SUCCESS or error code
+@return pointer to the block or NULL */
+buf_block_t*
+buf_page_get_gen(
+	const page_id_t		page_id,
+	const page_size_t&	page_size,
+	ulint			rw_latch,
+	buf_block_t*		guess,
+	ulint			mode,
+	const char*		file,
+	unsigned		line,
+	mtr_t*			mtr,
+	dberr_t*		err)
+{
+	recv_recovery_create_page(page_id);
+
+	return buf_page_get_low(page_id, page_size, rw_latch,
+				guess, mode, file, line, mtr, err);
 }
 
 /********************************************************************//**
