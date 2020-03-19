@@ -5628,3 +5628,44 @@ select count(*) from t2;
 count(*)
 2
 drop tables t2, t1;
+#
+# MDEV-20939:Race condition between mysqldump import and InnoDB
+# persistent statistics calculation
+#
+use mysql;
+# add smomething to be sure the tables are not empty
+insert into mysql.innodb_table_stats
+(database_name, table_name, n_rows, clustered_index_size,
+sum_of_other_index_sizes)
+values ("test","t1", 1, 1, 1);
+insert into mysql.innodb_index_stats
+(database_name, index_name, table_name, stat_name, stat_value, sample_size)
+values ("test", "i1", "t1", "i1", 1, 1);
+Warnings:
+Warning	1364	Field 'stat_description' doesn't have a default value
+# check that all tables we need are not empty
+select count(*) >=  1 from  mysql.innodb_table_stats;
+count(*) >=  1
+1
+select count(*) >=  1 from  mysql.innodb_index_stats;
+count(*) >=  1
+1
+select count(*) >=  1 from  mysql.proc;
+count(*) >=  1
+1
+select count(*) >=  1 from  mysql.db;
+count(*) >=  1
+1
+# for proc we have CREATE and INSERT for all other only CREATE
+FOUND /INSERT INTO `proc`/ in MDEV-20939.sql
+NOT FOUND /INSERT INTO `innodb_table_stats`/ in MDEV-20939.sql
+NOT FOUND /INSERT INTO `innodb_index_stats`/ in MDEV-20939.sql
+NOT FOUND /INSERT INTO `db`/ in MDEV-20939.sql
+FOUND /CREATE TABLE `innodb_table_stats`/ in MDEV-20939.sql
+FOUND /CREATE TABLE `innodb_index_stats`/ in MDEV-20939.sql
+FOUND /CREATE TABLE `db`/ in MDEV-20939.sql
+FOUND /CREATE TABLE `proc`/ in MDEV-20939.sql
+delete from mysql.innodb_table_stats;
+delete from mysql.innodb_index_stats;
+use test;
+# End of 10.1 tests
